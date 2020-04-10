@@ -59,13 +59,13 @@ def download_images(img_urls, dest_dir):
         os.makedirs(dest_dir)
 
     os.chdir(dest_dir)
-    print("changed dirs")
+    print("changed dirs to " + dest_dir)
 
-    for i in img_urls:
-        path = i.split("/")[-1]
+    for image in img_urls:
+        path = image.split("/")[-1]
 
-        print("Retrieving..." + i)
-        urllib.urlretrieve(i, os.getcwd() + "/" + path)
+        print("Retrieving..." + image)
+        urllib.urlretrieve(image, os.getcwd() + "/" + path)
 
         imgs.append("<img src={}>".format(path))
 
