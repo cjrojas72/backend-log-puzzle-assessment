@@ -22,14 +22,27 @@ import sys
 import urllib
 import argparse
 
+""" Christian Rojas """
+
 
 def read_urls(filename):
     """Returns a list of the puzzle urls from the given log file,
     extracting the hostname from the filename itself.
     Screens out duplicate urls and returns the urls sorted into
     increasing order."""
-    # +++your code here+++
-    pass
+    domains = 'http://' + filename.split("_")[1]
+    url_list = []
+
+    with open(filename, 'r') as f:
+        file = f.read()
+        images = re.findall(r'GET (\/.*?\.jpg)', file)
+
+    for image in images:
+        url_list.append(domains + image)
+
+    url_list = sorted(url_list, key=lambda x: x.rsplit('-', 1)[-1])
+
+    return url_list
 
 
 def download_images(img_urls, dest_dir):
@@ -41,13 +54,30 @@ def download_images(img_urls, dest_dir):
     Creates the directory if necessary.
     """
     # +++your code here+++
-    pass
+    imgs = []
+    if not os.path.exists(dest_dir):
+        os.makedirs(dest_dir)
+
+    os.chdir(dest_dir)
+    print("changed dirs to " + dest_dir)
+
+    for image in img_urls:
+        path = image.split("/")[-1]
+
+        print("Retrieving..." + image)
+        urllib.urlretrieve(image, os.getcwd() + "/" + path)
+
+        imgs.append("<img src={}>".format(path))
+
+    with open("index.html", "w") as html:
+        html.write("<html><body>{0}</body></html>".format(''.join(imgs)))
 
 
 def create_parser():
     """Create an argument parser object"""
     parser = argparse.ArgumentParser()
-    parser.add_argument('-d', '--todir',  help='destination directory for downloaded images')
+    parser.add_argument(
+        '-d', '--todir',  help='destination directory for downloaded images')
     parser.add_argument('logfile', help='apache logfile to extract urls from')
 
     return parser
